@@ -28,7 +28,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	logger.Info("Starting packer service")
+	logger.Info("Starting dispatcher service")
 
 	newDispatcher := dispatcher.New()
 
