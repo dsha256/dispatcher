@@ -1,0 +1,39 @@
+version: "3"
+
+env:
+  ENV: local
+
+vars:
+  GOBIN:
+    sh: go env GOPATH | sed 's/$/\/bin/'
+
+tasks:
+  lint:
+    desc: "Run linter."
+    cmds:
+      - golangci-lint run
+
+  format:
+    desc: "Format all Go code."
+    aliases: [ fmt ]
+    cmds:
+      # gofumpt & fieldalignment does not support Go 1.24 as for now.
+      - go mod edit -go=1.23 && go mod tidy
+      - gofumpt -l -w .
+      - fieldalignment -fix ./...
+      - go mod edit -go=1.24 && go mod tidy
+
+  test:
+    desc: "Run all tests in verbose mode with race detection enabled."
+    cmds:
+      - go test -v -race ./...
+
+  compose-up:
+    desc: "Docker compose up."
+    cmds:
+      - docker compose up --build
+
+  compose-down:
+    desc: "Docker compose down."
+    cmds:
+      - docker compose down --remove-orphans --volumes
